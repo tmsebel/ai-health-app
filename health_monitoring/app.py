@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 # import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 
 from data_utils import simulate_health_data, preprocess_data
 from health_model import detect_anomalies, evaluate_model, generate_recommendations
