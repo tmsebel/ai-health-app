@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from history_utils import save_session_data, generate_historical_summary, generate_overall_summary
 from data_utils import simulate_health_data, preprocess_data
 from health_model import detect_anomalies, evaluate_model, generate_recommendations
 
@@ -10,17 +11,36 @@ st.set_page_config(page_title="AI Health Monitoring System", layout="wide")
 st.title("🩺 AI-Powered Health Monitoring Dashboard")
 
 st.sidebar.header("Configuration")
-num_users = st.sidebar.slider("Number of Users", 1, 10, 3)
-num_minutes = st.sidebar.slider("Minutes of Data per User", 100, 1000, 300)
+num_users = st.sidebar.slider("Number of Users", 1, 10, 5)
+num_minutes = st.sidebar.slider("Minutes of Data per User", 100, 1000, 120)
 contamination = st.sidebar.slider("Anomaly Rate", 0.01, 0.2, 0.05)
 
-st.header("Simulated Health Data")
+st.header("Detected Health Data")
 df = simulate_health_data(num_users, num_minutes)
 st.dataframe(df.head(100))
+
+# Save processed session data for historical tracking
+for user_id in df_processed['user_id'].unique():
+    user_data = df_processed[df_processed['user_id'] == user_id]
+    save_session_data(user_data, user_id)
+st.sidebar.markdown("---")
 
 df_processed, df_scaled, feature_cols = preprocess_data(df)
 preds, model = detect_anomalies(df_scaled, contamination)
 df_processed['anomaly'] = ['Anomaly' if x == -1 else 'Normal' for x in preds]
+
+st.header("📊 Historical Data Summary")
+
+if st.button("Generate Historical Summary"):
+    summary_df = generate_overall_summary()
+    if not summary_df.empty:
+        st.dataframe(summary_df)
+        summary_df.to_csv("historical_summary.csv", index=False)
+        st.success("Historical summary saved as historical_summary.csv")
+    else:
+        st.info("No historical data found yet. Run a session first.")
+st.header("Anomaly Detection")
+st.write("Analyzing health data for anomalies...")
 
 st.header("Anomaly Detection Results")
 st.dataframe(df_processed[['user_id', 'timestamp', 'heart_rate', 'blood_oxygen', 'temperature', 'anomaly']].head(100))
