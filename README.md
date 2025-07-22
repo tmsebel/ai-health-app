@@ -4,7 +4,7 @@ A real-time AI-powered system for simulating, monitoring, and analyzing health v
 
 ## 🚀 Live Demo
 
-Access the deployed app here: [https://ai-health-app-fyx5noe7pleabe6mduqjmw.streamlit.app/](https://ai-health-app-fyx5noe7pleabe6mduqjmw.streamlit.app/)
+Access the deployed app here: https://healthwiseguardian.lovable.app
 
 ## 📊 Features
 
